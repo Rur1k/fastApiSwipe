@@ -12,7 +12,6 @@ class UserRole(str, Enum):
 class User(Model):
     """User class."""
     id = fields.UUIDField(pk=True)
-    username = fields.CharField(max_length=255, null=True, blank=True, unique=True)
     email = fields.CharField(db_index=True, max_length=255, unique=True)
     hashed_password = fields.CharField(null=True, max_length=255)
     phone = fields.CharField(max_length=16, null=True, blank=True)
@@ -62,13 +61,13 @@ class House(Model):
     sections = fields.IntField(null=True, blank=True)
     floors = fields.IntField(null=True, blank=True)
     risers = fields.IntField(null=True, blank=True)
-    builder = fields.ForeignKeyField("users.User", on_delete=fields.CASCADE, null=True, blank=True)
+    builder = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
 
 
 class Flat(Model):
     id = fields.UUIDField(pk=True)
     number = fields.IntField(null=True, blank=True)
-    house = fields.ForeignKeyField("users.House", on_delete=fields.CASCADE, null=True, blank=True)
+    house = fields.ForeignKeyField("app.House", on_delete=fields.CASCADE, null=True, blank=True)
     count_room = fields.IntField(null=True, blank=True)
     square = fields.FloatField(null=True, blank=True)
     price_per_meter = fields.FloatField(null=True, blank=True)
@@ -76,7 +75,7 @@ class Flat(Model):
     section = fields.IntField(null=True, blank=True)
     floor = fields.IntField(null=True, blank=True)
     riser = fields.IntField(null=True, blank=True)
-    creator = fields.ForeignKeyField("users.User", on_delete=fields.CASCADE, null=True, blank=True)
+    creator = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
     reserved = fields.BooleanField(default=False, blank=True)
 
 
@@ -90,8 +89,8 @@ class Notary(Model):
 
 class Announcement(Model):
     id = fields.UUIDField(pk=True)
-    user = fields.ForeignKeyField("users.User", on_delete=fields.CASCADE, null=True, blank=True)
-    house = fields.ForeignKeyField("users.House", on_delete=fields.CASCADE, null=True, blank=True)
+    user = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
+    house = fields.ForeignKeyField("app.House", on_delete=fields.CASCADE, null=True, blank=True)
     founding_documents = fields.CharField(max_length=64, null=True, blank=True)
     purpose = fields.CharField(max_length=64, null=True, blank=True)
     count_rooms = fields.CharField(max_length=64, null=True, blank=True)
@@ -111,5 +110,5 @@ class Announcement(Model):
 
 class Favorite(Model):
     id = fields.UUIDField(pk=True)
-    user = fields.ForeignKeyField("users.User", on_delete=fields.CASCADE, null=True, blank=True)
-    announcement = fields.ForeignKeyField("users.Announcement", on_delete=fields.CASCADE, null=True, blank=True)
+    user = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
+    announcement = fields.ForeignKeyField("app.Announcement", on_delete=fields.CASCADE, null=True, blank=True)

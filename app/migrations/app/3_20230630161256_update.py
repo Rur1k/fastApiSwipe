@@ -3,6 +3,7 @@ from tortoise import BaseDBAsyncClient
 
 async def upgrade(db: BaseDBAsyncClient) -> str:
     return """
+    
     CREATE TABLE IF NOT EXISTS "house" (
     "id" UUID NOT NULL  PRIMARY KEY,
     "name" VARCHAR(64) NOT NULL UNIQUE,
@@ -76,20 +77,17 @@ async def upgrade(db: BaseDBAsyncClient) -> str:
     "creator_id" UUID REFERENCES "user" ("id") ON DELETE CASCADE,
     "house_id" UUID REFERENCES "house" ("id") ON DELETE CASCADE
 );;
-    
         CREATE TABLE IF NOT EXISTS "notary" (
     "id" UUID NOT NULL  PRIMARY KEY,
     "first_name" VARCHAR(64),
     "last_name" VARCHAR(64),
     "phone" VARCHAR(16),
     "email" VARCHAR(64)
-);;
-        ALTER TABLE "user" ADD "role" VARCHAR(8) NOT NULL  DEFAULT 'user';"""
+);;"""
 
 
 async def downgrade(db: BaseDBAsyncClient) -> str:
     return """
-        ALTER TABLE "user" DROP COLUMN "role";
         DROP TABLE IF EXISTS "announcement";
         DROP TABLE IF EXISTS "favorite";
         DROP TABLE IF EXISTS "flat";

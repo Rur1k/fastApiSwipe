@@ -6,11 +6,20 @@ PORT=8000
 # ##########################################################################
 # common commands
 
+init:
+	python init_project.py
+
 run:
-	$(SERVER) main:app --host 127.0.0.1 --port $(PORT) --reload --lifespan on
+	python main.py
 
 install:
 	pip install -r requirements.txt
+
+first-init-db:
+	aerich init -t config.db.DB_CONFIG
+
+init-db:
+	aerich init-db
 
 migrate:
 	aerich migrate
