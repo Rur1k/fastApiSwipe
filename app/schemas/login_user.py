@@ -1,6 +1,18 @@
+from uuid import UUID
+
 from pydantic import BaseModel, EmailStr, SecretStr
 
 
-class UserLogin(BaseModel):
+class UserSchema(BaseModel):
     email: EmailStr
-    password: str
+    role: str
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None

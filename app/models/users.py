@@ -1,3 +1,5 @@
+import uuid
+
 from tortoise.models import Model
 from tortoise import fields
 from enum import Enum
@@ -61,7 +63,7 @@ class House(Model):
     sections = fields.IntField(null=True, blank=True)
     floors = fields.IntField(null=True, blank=True)
     risers = fields.IntField(null=True, blank=True)
-    builder = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
+    builder = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True, related_name='house_user')
 
 
 class Flat(Model):
@@ -75,7 +77,7 @@ class Flat(Model):
     section = fields.IntField(null=True, blank=True)
     floor = fields.IntField(null=True, blank=True)
     riser = fields.IntField(null=True, blank=True)
-    creator = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
+    creator = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True, related_name='flat_user')
     reserved = fields.BooleanField(default=False, blank=True)
 
 
@@ -89,7 +91,7 @@ class Notary(Model):
 
 class Announcement(Model):
     id = fields.UUIDField(pk=True)
-    user = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
+    user = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True, related_name='announcement_user')
     house = fields.ForeignKeyField("app.House", on_delete=fields.CASCADE, null=True, blank=True)
     founding_documents = fields.CharField(max_length=64, null=True, blank=True)
     purpose = fields.CharField(max_length=64, null=True, blank=True)
@@ -112,3 +114,15 @@ class Favorite(Model):
     id = fields.UUIDField(pk=True)
     user = fields.ForeignKeyField("app.User", on_delete=fields.CASCADE, null=True, blank=True)
     announcement = fields.ForeignKeyField("app.Announcement", on_delete=fields.CASCADE, null=True, blank=True)
+
+
+class Token(Model):
+    id = fields.IntField(pk=True, unique=True)
+    token = fields.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        null=False,
+        index=True
+    )
+    expires = fields.DatetimeField()
+    user = fields.ForeignKeyField("app.User", related_name='token')

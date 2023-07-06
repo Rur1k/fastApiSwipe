@@ -1,4 +1,5 @@
 import uuid
+from typing import Annotated
 
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
@@ -9,18 +10,19 @@ from schemas.house import HouseSchema
 
 from models.users import User
 
+from deps import get_current_user
+
 settings = get_settings()
 house_router = APIRouter()
 
 
 @house_router.get("/", response_model=list[HouseSchema])
-async def houses():
+async def houses(user: User = Depends(get_current_user)):
     return await House.all()
 
 
 @house_router.post("/create")
-async def create_house(form_data: HouseSchema = Depends()):
-    user = await User.get_or_none(id=form_data.builder_id)
+async def create_house(form_data: HouseSchema = Depends(), user: User = Depends(get_current_user)):
     if user:
         house = await House.create(
             name=form_data.name,
@@ -63,8 +65,8 @@ async def create_house(form_data: HouseSchema = Depends()):
         )
 
 
-@house_router.patch("/view/{house_id}")
-async def view_house(house_id: uuid.UUID):
+@house_router.get("/view/{house_id}")
+async def view_house(house_id: uuid.UUID, user: User = Depends(get_current_user)):
     obj = await House.get_or_none(id=house_id)
     if obj:
         return obj
@@ -76,7 +78,7 @@ async def view_house(house_id: uuid.UUID):
 
 
 @house_router.patch("/update/{house_id}")
-async def update_house(house_id: uuid.UUID, house_schema: HouseSchema):
+async def update_house(house_id: uuid.UUID, house_schema: HouseSchema, user: User = Depends(get_current_user)):
     obj = await House.get_or_none(id=house_id)
 
     if obj:
@@ -93,7 +95,7 @@ async def update_house(house_id: uuid.UUID, house_schema: HouseSchema):
 
 
 @house_router.delete("/delete/{house_id}")
-async def delete_house(house_id: uuid.UUID):
+async def delete_house(house_id: uuid.UUID, user: User = Depends(get_current_user)):
     obj = await House.get_or_none(id=house_id)
     if obj:
         await obj.delete()
